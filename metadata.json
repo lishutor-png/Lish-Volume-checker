@@ -1,0 +1,6 @@
+{
+  "name": "Lish Volume Checker",
+  "description": "Aplikasi pengukur dan pembanding kenyaringan audio MP3 dengan standar Integrated LUFS dan True Peak secara akurat dan efisien.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Lish Volume Checker</string>
+    <string name="tab_analysis">Analisis</string>
+    <string name="tab_history">Riwayat</string>
+    <string name="reference_title">Lagu Referensi</string>
+    <string name="test_title">Lagu Pengujian</string>
+    <string name="choose_mp3">Pilih File MP3</string>
+    <string name="change_file">Ganti File</string>
+    <string name="delete_reference">Hapus Referensi</string>
+    <string name="integrated_lufs">Integrated LUFS</string>
+    <string name="true_peak">True Peak</string>
+    <string name="comparison_result">Hasil Perbandingan</string>
+    <string name="gain_recommendation">Rekomendasi Gain</string>
+    <string name="status_louder">Lebih Keras</string>
+    <string name="status_quieter">Lebih Pelan</string>
+    <string name="status_matched">Tingkat Serasi (Seimbang)</string>
+    <string name="error_file_read">Gagal membaca atau memproses file audio.</string>
+</resources>
