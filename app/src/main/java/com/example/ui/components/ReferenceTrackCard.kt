@@ -18,10 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Audiotrack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -53,8 +53,10 @@ import kotlin.math.roundToInt
 fun ReferenceTrackCard(
     reference: ReferenceTrackEntity?,
     isAnalyzing: Boolean,
+    isBusy: Boolean,
     progress: Float,
     onPickFile: () -> Unit,
+    onCancelAnalysis: () -> Unit,
     onDeleteReference: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -147,16 +149,16 @@ fun ReferenceTrackCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Menganalisis audio referensi...",
+                            text = "Menganalisis seluruh durasi referensi...",
                             style = MaterialTheme.typography.bodySmall,
                             color = CyanPrimary
                         )
@@ -177,12 +179,30 @@ fun ReferenceTrackCard(
                         color = CyanPrimary,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(
+                            onClick = onCancelAnalysis,
+                            modifier = Modifier.testTag("cancel_ref_analysis_button"),
+                            colors = ButtonDefaults.textButtonColors(contentColor = RoseWarning)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Batalkan", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
                 }
             }
 
             if (!isAnalyzing) {
                 if (reference == null) {
-                    // Empty state: prompt to choose MP3
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
@@ -210,6 +230,7 @@ fun ReferenceTrackCard(
                             )
                             Button(
                                 onClick = onPickFile,
+                                enabled = !isBusy,
                                 modifier = Modifier.testTag("pick_reference_button"),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = CyanPrimary,
@@ -231,9 +252,7 @@ fun ReferenceTrackCard(
                         }
                     }
                 } else {
-                    // Has active reference track
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        // File info box
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
@@ -276,7 +295,6 @@ fun ReferenceTrackCard(
                             }
                         }
 
-                        // Meter readings
                         LufsMeterCard(
                             lufs = reference.integratedLufs,
                             testTag = "ref_lufs_meter"
@@ -286,7 +304,6 @@ fun ReferenceTrackCard(
                             testTag = "ref_true_peak_meter"
                         )
 
-                        // Action buttons
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.End,
@@ -294,6 +311,7 @@ fun ReferenceTrackCard(
                         ) {
                             TextButton(
                                 onClick = onDeleteReference,
+                                enabled = !isBusy,
                                 modifier = Modifier.testTag("delete_reference_button"),
                                 colors = ButtonDefaults.textButtonColors(
                                     contentColor = RoseWarning
@@ -312,6 +330,7 @@ fun ReferenceTrackCard(
 
                             OutlinedButton(
                                 onClick = onPickFile,
+                                enabled = !isBusy,
                                 modifier = Modifier.testTag("change_reference_button"),
                                 shape = RoundedCornerShape(10.dp),
                                 border = BorderStroke(1.dp, CyanPrimary.copy(alpha = 0.6f))

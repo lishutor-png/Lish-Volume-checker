@@ -15,11 +15,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeDown
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.VolumeDown
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -59,8 +59,8 @@ fun ComparisonCard(
     }
 
     val statusIcon = when (comparison.status) {
-        LoudnessStatus.LOUDER -> Icons.Default.VolumeUp
-        LoudnessStatus.QUIETER -> Icons.Default.VolumeDown
+        LoudnessStatus.LOUDER -> Icons.AutoMirrored.Filled.VolumeUp
+        LoudnessStatus.QUIETER -> Icons.AutoMirrored.Filled.VolumeDown
         LoudnessStatus.MATCHED -> Icons.Default.CheckCircle
     }
 

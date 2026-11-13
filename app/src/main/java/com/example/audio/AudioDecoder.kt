@@ -119,6 +119,7 @@ class AudioDecoder(private val context: Context) {
             var isInputEos = false
             var isOutputEos = false
             var lastReportedProgress = 0f
+            var totalDecodedSamples = 0L
 
             while (!isOutputEos) {
                 currentCoroutineContext().ensureActive()
@@ -172,7 +173,7 @@ class AudioDecoder(private val context: Context) {
                             outputBuffer.limit(bufferInfo.offset + bufferInfo.size)
                             outputBuffer.order(ByteOrder.LITTLE_ENDIAN)
 
-                            processPcmBuffer(
+                            totalDecodedSamples += processPcmBuffer(
                                 outputBuffer,
                                 pcmEncoding,
                                 actualChannels,
@@ -212,6 +213,10 @@ class AudioDecoder(private val context: Context) {
                 }
             }
 
+            if (totalDecodedSamples == 0L) {
+                throw IllegalArgumentException("File '$fileName' kosong, rusak, atau tidak mengandung data audio yang valid.")
+            }
+
             onProgress(1.0f)
 
             val integratedLufs = lufsMeter.calculateIntegratedLufs()
@@ -248,10 +253,11 @@ class AudioDecoder(private val context: Context) {
         channels: Int,
         lufsMeter: LufsMeter,
         truePeakMeter: TruePeakMeter
-    ) {
-        if (channels <= 0) return
+    ): Long {
+        if (channels <= 0) return 0L
 
         var channelIndex = 0
+        var count = 0L
 
         if (encoding == AudioFormat.ENCODING_PCM_FLOAT) {
             val floatBuffer = buffer.asFloatBuffer()
@@ -261,6 +267,7 @@ class AudioDecoder(private val context: Context) {
                 truePeakMeter.processSample(channelIndex, sample)
 
                 channelIndex = (channelIndex + 1) % channels
+                count++
             }
         } else {
             // Default 16-bit signed PCM
@@ -271,7 +278,9 @@ class AudioDecoder(private val context: Context) {
                 truePeakMeter.processSample(channelIndex, sample)
 
                 channelIndex = (channelIndex + 1) % channels
+                count++
             }
         }
+        return count
     }
 }

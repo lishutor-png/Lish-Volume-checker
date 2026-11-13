@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-files-path
+        name="exported_music"
+        path="Music/" />
+    <files-path
+        name="internal_music"
+        path="Music/" />
+    <cache-path
+        name="temp_music"
+        path="." />
+</paths>

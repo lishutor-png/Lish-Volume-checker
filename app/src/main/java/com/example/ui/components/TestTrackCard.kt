@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Refresh
@@ -30,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,17 +43,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.audio.AudioAnalysisResult
 import com.example.ui.AudioFormatUtils
-import com.example.ui.theme.AmberAccent
-import com.example.ui.theme.CyanPrimary
 import com.example.ui.theme.IndigoSecondary
+import com.example.ui.theme.RoseWarning
 import kotlin.math.roundToInt
 
 @Composable
 fun TestTrackCard(
     testResult: AudioAnalysisResult?,
     isAnalyzing: Boolean,
+    isBusy: Boolean,
     progress: Float,
     onPickFile: () -> Unit,
+    onCancelAnalysis: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -143,9 +146,9 @@ fun TestTrackCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -173,12 +176,30 @@ fun TestTrackCard(
                         color = IndigoSecondary,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(
+                            onClick = onCancelAnalysis,
+                            modifier = Modifier.testTag("cancel_test_analysis_button"),
+                            colors = ButtonDefaults.textButtonColors(contentColor = RoseWarning)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Batalkan", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
                 }
             }
 
             if (!isAnalyzing) {
                 if (testResult == null) {
-                    // Empty state: prompt to choose test MP3
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(14.dp),
@@ -206,6 +227,7 @@ fun TestTrackCard(
                             )
                             Button(
                                 onClick = onPickFile,
+                                enabled = !isBusy,
                                 modifier = Modifier.testTag("pick_test_button"),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = IndigoSecondary,
@@ -227,9 +249,7 @@ fun TestTrackCard(
                         }
                     }
                 } else {
-                    // Analyzed test track
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        // File info box
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp),
@@ -272,7 +292,6 @@ fun TestTrackCard(
                             }
                         }
 
-                        // Meter readings
                         LufsMeterCard(
                             lufs = testResult.integratedLufs,
                             testTag = "test_lufs_meter"
@@ -282,13 +301,13 @@ fun TestTrackCard(
                             testTag = "test_true_peak_meter"
                         )
 
-                        // Action button
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.End
                         ) {
                             OutlinedButton(
                                 onClick = onPickFile,
+                                enabled = !isBusy,
                                 modifier = Modifier.testTag("change_test_button"),
                                 shape = RoundedCornerShape(10.dp),
                                 border = BorderStroke(1.dp, IndigoSecondary.copy(alpha = 0.6f))
